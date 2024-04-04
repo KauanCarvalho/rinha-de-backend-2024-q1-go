@@ -9,5 +9,4 @@ Por enquanto o projeto nao possui nada de diferencial, apenas lida com todos os 
 **TO-DO**:
 - [ ] Melhorar performance com estratégias mais elaboradas.
 - [ ] Deixar o código mais limpo.
-- [ ] melhorar `setup` de prod.
 - [ ] Adicionar testes.

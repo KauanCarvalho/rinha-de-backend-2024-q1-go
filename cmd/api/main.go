@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -36,7 +37,15 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 
-	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("DATABASE_DSN"), "PostgreSQL DSN")
+	databaseConnectionString := fmt.Sprintf(
+		"postgres://%s:%s@%s/%s?sslmode=disable",
+		os.Getenv("DATABASE_USER"),
+		os.Getenv("DATABASE_PASS"),
+		os.Getenv("DATABASE_HOST"),
+		os.Getenv("DATABASE_NAME"),
+	)
+
+	flag.StringVar(&cfg.db.dsn, "db-dsn", databaseConnectionString, "PostgreSQL DSN")
 
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 15, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 15, "PostgreSQL max idle connections")
