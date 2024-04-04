@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
+
+	"backendfight.kauancarvalho/internal/data"
 
 	_ "github.com/lib/pq"
 )
@@ -21,6 +22,12 @@ type config struct {
 		maxIdleConns int
 		maxIdleTime  string
 	}
+}
+
+type application struct {
+	config config
+	models data.Models
+	db     *sql.DB
 }
 
 func main() {
@@ -39,11 +46,20 @@ func main() {
 
 	db, err := openDB(cfg)
 	if err != nil {
-		log.Fatal(err, nil)
+		log.Fatal(err)
 	}
 	defer db.Close()
 
-	fmt.Println("Hello, World!")
+	app := &application{
+		config: cfg,
+		models: data.NewModels(db),
+		db:     db,
+	}
+
+	err = app.server()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func openDB(cfg config) (*sql.DB, error) {
