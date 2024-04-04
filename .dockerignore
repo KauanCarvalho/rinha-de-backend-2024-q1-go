@@ -1,0 +1,9 @@
+/.github
+
+/containers
+
+/.env.sample
+
+/docker-compose-*.yml
+
+.gitkepp
