@@ -1,2 +1,2 @@
 # Ignore binary built in root path.
-api
+/api
