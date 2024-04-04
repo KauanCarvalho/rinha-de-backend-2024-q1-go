@@ -8,6 +8,20 @@ on:
 
 jobs:
   test:
+    services:
+        db:
+          image: postgres:16.2-alpine
+          ports: ['5432:5432']
+          env:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: backendfight_test
+          options: >-
+            --health-cmd pg_isready
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
     runs-on: ubuntu-latest
     name: Test on Go ${{matrix.go-version}}
     strategy:
@@ -20,6 +34,12 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
+
+      - name: Install golang-migrate
+        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+      - name: Run migrations
+        run: migrate -path ./migrations -database="postgres://postgres:postgres@localhost/backendfight_test?sslmode=disable" -verbose up
 
       - name: Verify dependencies
         run: go mod verify
