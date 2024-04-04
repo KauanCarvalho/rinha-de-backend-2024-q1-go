@@ -24,7 +24,7 @@ func (app *application) createTransaction(w http.ResponseWriter, r *http.Request
 
 	err = app.readJSON(w, r, &input)
 	if err != nil {
-		app.badRequestResponse(w, r, err)
+		app.failedValidationResponse(w, r, map[string]string{"decode": err.Error()})
 		return
 	}
 
@@ -86,7 +86,15 @@ func (app *application) createTransaction(w http.ResponseWriter, r *http.Request
 
 	tx.Commit()
 
-	err = app.writeJSON(w, http.StatusOK, customer)
+	result := struct {
+		Limit   int64 `json:"limite"`
+		Balance int64 `json:"saldo"`
+	}{
+		Limit:   customer.BankLimit,
+		Balance: customer.BankBalance,
+	}
+
+	err = app.writeJSON(w, http.StatusOK, result)
 	if err != nil {
 		app.serverErrorResponse(w, r)
 	}
